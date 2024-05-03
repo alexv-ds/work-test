@@ -37,14 +37,16 @@ double integrate(double from, double to, std::size_t segments, const std::functi
 
 
 int main() {
-  double result = integrate(std::numeric_limits<double>::min(), std::numbers::pi_v<double>, 300000000, [](double x) -> double {
-    return std::pow(std::sin(13 * x) / std::sin(x), 12);
+  double result = integrate(std::numeric_limits<double>::min(), std::numbers::pi_v<double>, 10000000, [](double x) -> double {
+//    return std::pow(std::sin(13 * x) / std::sin(x), 12);
+    return std::pow(std::sin(10 * x) / std::sin(x), 6);
+
   });
 
   result /= std::numbers::pi_v<double>;
 
-  //707972099627
+  //707972099627 - правильное значение
   //707972265076 - моё
-  std::cout << static_cast<std::size_t>(result) << std::endl;
+  std::cout << static_cast<std::size_t>(std::round(result)) << std::endl;
 
 }
