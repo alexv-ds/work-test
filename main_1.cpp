@@ -35,6 +35,7 @@ static double integrate2(double from, double to, int segments, const Func func) 
 }
 
 
+
 static double integrate3(double from, double to, std::size_t segments, const std::function<xsimd::batch<double>(xsimd::batch<double>)> func) {
   // Увеличим количество сегментов до числа кратного batch<double>::size
   // Это слегка увеличит точность, и немного производительность, т.к. избавляет нас от

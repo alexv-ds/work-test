@@ -16,9 +16,9 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 add_executable(main_1 main_1.cpp)
 
-#target_compile_options(main_1 PRIVATE
-#  -march=native
-#)
+target_compile_options(main_1 PRIVATE
+  -march=native -ffast-math
+)
 
 include(get_cpm.cmake)
 CPMAddPackage(
