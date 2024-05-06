@@ -1,4 +1,3 @@
-#include <iostream>
 #include <functional>
 #include <limits>
 #include <numbers>
@@ -7,7 +6,15 @@
 #include <catch2/benchmark/catch_benchmark.hpp>
 #include <xsimd/xsimd.hpp>
 #include <array>
+#include <iostream>
+#include <hwy/highway.h>
+#include <hwy/contrib/math/math-inl.h>
 
+namespace hn = hwy::HWY_NAMESPACE;
+
+
+constexpr hn::ScalableTag<double> g_tag;
+using VecT = hn::TFromD<decltype(g_tag)>;
 
 static double integrate(double from, double to, int segments, const std::function<double(double)>& func) {
   double result = 0;
@@ -70,8 +77,17 @@ static double integrate3(double from, double to, std::size_t segments, const std
   return xsimd::reduce_add(result);
 };
 
-TEST_CASE("TESTS") {
+static double do_magic() {
+  hn::ScalableTag<double> tag;
+  const double from = 0;
+  const double to = std::numbers::pi_v<double>;
 
+  auto keks = hn::Load
+
+  return 0;
+}
+
+TEST_CASE("TESTS") {
   BENCHMARK("NO SIMD - std::function"){
     double result = integrate(0, std::numbers::pi_v<double>, 10000, [](double x) -> double {
       return std::pow(std::sin(13 * x) / std::sin(x), 12);
@@ -93,9 +109,14 @@ TEST_CASE("TESTS") {
   BENCHMARK("SIMD - std::function"){
     double result = integrate3(0, std::numbers::pi_v<double>, 10000, [](xsimd::batch<double> x) -> xsimd::batch<double> {
       return xsimd::pow(xsimd::sin(13.0 * x) / xsimd::sin(x), 12);
-//      return x + 1;
-
     });
+    result /= std::numbers::pi_v<double>;
+    result *= 13.0;
+    return result;
+  };
+
+  BENCHMARK("SIMD HWY - std::function"){
+    double result = do_magic();
     result /= std::numbers::pi_v<double>;
     result *= 13.0;
     return result;

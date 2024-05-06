@@ -16,8 +16,9 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 add_executable(main_1 main_1.cpp)
 
-target_compile_options(main_1 PRIVATE
-  -march=native -ffast-math
+add_compile_options(
+  -march=native
+  #  -ffast-math
 )
 
 include(get_cpm.cmake)
@@ -43,3 +44,16 @@ CPMAddPackage(
   EXCLUDE_FROM_ALL YES
 )
 target_link_libraries(main_1 PRIVATE xsimd)
+
+CPMAddPackage(
+  NAME highway
+  URL "https://github.com/google/highway/archive/refs/tags/1.1.0.tar.gz"
+  URL_HASH "SHA3_256=136fdb4cab45050f253558b452309de557225b6ff83c354db1dbcf23ceb151e7"
+  SYSTEM YES
+  EXCLUDE_FROM_ALL YES
+  OPTIONS
+  "HWY_ENABLE_EXAMPLES OFF"
+  "HWY_ENABLE_INSTALL OFF"
+  "HWY_ENABLE_TESTS OFF"
+)
+target_link_libraries(main_1 PRIVATE hwy hwy_contrib)
