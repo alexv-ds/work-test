@@ -31,6 +31,8 @@ CPMAddPackage(
   NAME Catch2
   URL "https://github.com/catchorg/Catch2/archive/refs/tags/v3.5.4.tar.gz"
   URL_HASH "SHA3_256=6908501ace10bca5ece01a972e4834777f3b3cb5e14b391cec015caeb5470eff"
+  SYSTEM YES
+  EXCLUDE_FROM_ALL YES
   OPTIONS
   "CATCH_INSTALL_DOCS OFF"
   "CATCH_INSTALL_EXTRAS OFF"
