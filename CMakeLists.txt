@@ -10,17 +10,24 @@ if (NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release" CACHE STRING "")
 endif ()
 
+if (MSVC)
+  # С клангом проще, у него такие же флаги (-march=haswell -mavx2), как и у GCC
+  message(FATAL_ERROR "MSVC Not Supported - use clang on Windows")
+endif ()
+
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 add_executable(main_1 main_1.cpp)
 
+
 if (MSVC)
   target_compile_options(main_1 PRIVATE /arch:AVX2)
 else ()
   target_compile_options(main_1 PRIVATE
 #    -march=haswell -mavx2
+    #-mavx512f -mfma
     -march=native
   )
 endif ()
@@ -48,3 +55,8 @@ CPMAddPackage(
   EXCLUDE_FROM_ALL YES
 )
 target_link_libraries(main_1 PRIVATE xsimd)
+
+
+function(create_benchmark TARGET)
+
+endfunction()
