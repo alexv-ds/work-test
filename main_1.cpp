@@ -33,12 +33,19 @@ inline double f_x(const double x) {
 // SIMD версия.
 template <class Arch, class Func>
 double integrate_simd(const double from, const double to, std::size_t segments, const Func func) {
+  // Делаем так, что бы segments было кратно размеру simd линии. Это немного увеличит точность (за счет кол-ва итераций)
+  // И увеличит производительнось, т.к. мы избавимся от необходимости обрабатывать хвосты, которые не поместились
+  // в линию
   segments += xsimd::batch<double, Arch>::size - (segments % xsimd::batch<double, Arch>::size);
 
   xsimd::batch<double, Arch> result = 0.0;
   const double h = (to - from) / static_cast<double>(segments);
 
   for (std::size_t i = 0; i < segments; i += xsimd::batch<double, Arch>::size) {
+    // Подготавливаем данные, которые будем рассчитывать, заполняем массив
+    // текущими индексами
+    // Выравнивание должно быть таким же, как и у batch<double>, что бы не терять производительность
+    // на загрузке из памяти
     alignas(xsimd::batch<double, Arch>) std::array<double, xsimd::batch<double, Arch>::size> indexes; // NOLINT(*-pro-type-member-init)
 
     for (double& num : indexes) {
@@ -48,7 +55,7 @@ double integrate_simd(const double from, const double to, std::size_t segments, 
     result += func(from + h / 2.0 + xsimd::load_aligned<Arch>(indexes.data()) * h);
   }
   result *= h;
-  return xsimd::reduce_add(result);
+  return xsimd::reduce_add(result); //суммируем все значения
 }
 
 // Формула которую нам надо проинтегрировать.
